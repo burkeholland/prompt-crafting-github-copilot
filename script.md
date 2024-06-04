@@ -1,4 +1,25 @@
-# Crafting Good Prompts with GitHub Copilot
+# Crafting Good Prompts with GitHub Copilot'
+
+## Prerequisites
+
+1. [VS Code - Insiders](https://code.visualstudio.com/insiders/)
+2. [GitHub Copilot](https://copilot.github.com/)
+3. [Regex Preview](https://marketplace.visualstudio.com/items?itemName=chrmarti.regex)
+4. [Postgres](https://www.postgresql.org/download/)
+5. [Postgres Chat Participant](https://marketplace.visualstudio.com/items?itemName=robconery.pg-chat)
+
+## Setup
+
+Add the following settings to your User Settings (JSON) file...
+
+```json
+"github.copilot.advanced": {
+    "debug.conversation": true,
+    "conversationLoggingEnabled": true
+},
+```
+
+Rename the RENAME_ME.env to .env and add your Postgres connection string.
 
 > Crafting good prompts with GitHub Copilot depends a lot on how and where you are using GitHub Copilot. How you use Copilot is almost more important than the the prompt itself. There are essentially 3 interaction models that you'll use in VS Code when working with Copilot - Ghost Text, Inline Chat and Chat Sidebar / Quick Chat.
 
@@ -262,9 +283,199 @@ You should get back a command that will run in the terminal.
 
 > Notice that we get back a specific command that we can run with Cmd/Ctrl + Enter. We don't get back any explanatory text. This is because we asked a very specific thing. Remember - simple, specific and short.
 
-> But there are times when you need to do a lot more. You need to have an actual conversation with Copilot. This happens a lot when you are brainstorming certain ideas 
+> Let's ask Copilot how we can compile the TypeScript in this project.
 
+Add the following prompt to the Inline Chat in the terminal:
 
+```text
+compile app.ts
+```
+
+You should get back a command that will run in the terminal.
+
+> Great! Now let's run this with Node - and there we go - up an running.
+
+> But there are times when you need to do a lot more. You need to have an actual conversation with Copilot. This happens a lot when you are brainstorming certain ideas, you need to examine more complex code, etc. This is where the Chat Sidebar comes in.
+
+## Chat Sidebar
+
+> The Chat Sidebar is a more "traditional" chat interface. It's one that a lot of people are used to because of things like ChatGPT. And while you will spend a lot of time interacting with Copilot in the editor, the Chat Sidebar is where you can have a more in-depth conversation.
+
+> Let's start by opening the Chat Sidebar. Press Cmd/Ctrl + B to open the sidebar and you'll see the chat icon. Click on that to open the Chat Sidebar.
+
+Open the Chat Sidebar.
+
+> Now let's do some more complex brainstorming here. What I want to do is build an application to display electric vehicle data that I have in a postgres database. We already have the simple Express server, but I would like some help with how I should structure the application. 
+
+Add the following prompt to the Chat Sidebar:
+
+```text
+I am building an express web application that displays electric vehicle data from a database. Ask me 5 questions about my project that will help you suggest a good file and folder structure.
+```
+
+It's hard to know exactly what you'll get back here, but it's likely that it's a list of 5(ish) questions. You can answer them yes/no, or with more context...
+
+```text
+1. postgres
+2. No
+3. No
+4. Yes - use Jest
+5. No
+```
+
+Press "Enter" again and GitHub Copilot will return a folder structure along with some explanation of what it all does.
+
+> Here we used a strategy of having Copilot ask us questions. You can do this - you don't have to be the one asking all the questions. This is a great way to get Copilot to jog your brain for things you haven't thought of yet. Another strategy that you can use here is to ask for variations along with the trade-offs of each approach.
+
+Add the following prompt to the Chat Sidebar:
+
+```text
+i want to create a db access file for postgres that uses one connection per session. give me some options for how to do this - include tradeoffs
+```
+
+You should get back a few different options along with some trade-offs.
+
+> Let's use Option 1 here and ask for a few alterations to the code copilot suggested.
+
+Add the following prompt to the Chat Sidebar:
+
+```text
+Use option 1. Use .env file for settings.
+```
+
+You should get back a completion that uses the .env file for settings. Click the ellipsis on the code block and select "Insert into New File". Name the file `db.ts`.
+
+> Now let's take some of the earlier folder structure suggestions - specifically having a "controllers" folder. I like this pattern. For the sake of time I'll add the vehicle controllers code and the vehicle router code to this project. 
+
+Add a file to the project called `controllers/vehicleController.ts` and add the following code:
+
+```typescript
+import { Request, Response } from 'express';
+import { query } from '../data/db';
+
+export const getAllVehicles = async (req: Request, res: Response) => {
+    try {
+        const result = await query('SELECT TOP 100 * FROM vehicles', []);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'An error occurred while fetching vehicles' });
+    }
+};
+```
+
+Add a file to the project called `routes/vehicleRouter.ts` and add the following code:
+
+```typescript
+import express from 'express';
+import { getAllVehicles } from '../controllers/vehicleController';
+
+const vehicleRouter = express.Router();
+
+vehicleRouter.get('/', getAllVehicles);
+
+export default vehicleRouter;
+```
+
+Leave both of these tabs up and return the `app.ts` file. 
+
+> Now let's import the `vehicleController`. We have it open as a tab so we can be relatively sure the Copilot knows about it. And when we ask for the import, we'll get the correct completion. Even better, remember that Ghost Text can anticipate, so if we move down to use the router and press enter, Copilot will likely use the router for us. Then we can tweak the URL just slightly.
+
+> Let's compile again - this time we'll add a watch flag so that we can see the changes in real time. And we'll run the server. If we head over to /api/vehicles, we should see the data.
+
+In the terminal, stop the node server and run the following command:
+
+```bash
+tsc -w
+```
+
+Open a new terminal tab and run the following command:
+
+```bash
+node app.js
+```
+
+Navigate to `http://localhost:3000/api/vehicles` in your browser. You should see "server error".
+
+> OK - we have an error here. Let's go back to the `vehicleController` and see what's going on.
+
+> Copilot does a lot behind the scenes to compose prompts for you - we've seen that. A lot of it is done for you. As we've seen selecting text is always a good option when asking a question. Having the relevant code open is also always a good idea since Copilot always passes whatever is in the visible editor space. 
+
+> There are some prompts that get written so often that they are actually baked into Copilot. We call these "Slash Commands".
+
+## Slash Commands
+
+> Slash commands are pre-packaged and optimized prompts for common tasks. For instance, a common need is to document a function. Copilot has a slash command for that. 
+
+Select the `getAllVehicles` function. Press Cmd/Ctrl + I to open Inline Chat and add the following prompt:
+
+```text
+/doc
+```
+
+Copilot should generate a JSDoc comment for the function.
+
+> Perhaps the most important pre-packged prompt in all of Copilot, is /fix. If we examine the error in our terminal, we can see we have a syntax error at or near 100. That's odd. This is a pretty simple query. Let's see if Copilot can help us out with the /fix command. I'm going to select the query and run the /fix command.
+
+Select the query (line 6) in the `vehicleController` and press Cmd/Ctrl + I to open Inline Chat. Add the following prompt:
+
+```text
+/fix
+```
+
+Copilot will make some suggestion that is wrong.
+
+> OK, so we're getting a suggestion here, but I can look at this right away and know this is wrong. It's important to note that the more experience you have and the more you know a framework or language, the more help copilot is going to be for you. This is because it _does_ give wrong answers. And if you can spot those immediately, you can save yourself a lot of time. It's a tricky situation to be in with Copilot when you have no clue what you are doing and you have no idea if it's giving a correct answer, or just something that looks correct, but is going to waste the next 30 minutes of your time because it's ultimately wrong.
+
+> In this case - I know this suggestion is wrong. My guess is that Copilot needs more context here. So I have a few options - I could select all of the text in the editor and run the /fix command again. But what I really need here is for Copilot to understand everything about my project. We've talked about how it doesn't know about every file. But there is a way to give it that context.
+
+## Participants
+
+> Participants are experts within Copilot on specific topics. They are "trained" (in a manner of speaking) on specific content. For instance, there is a @vscode participant. This participant is an expert in all things VS Code. We might ask this participant how to hide the JavaScript files in this project.
+
+Add the following prompt to the Chat Sidebar:
+
+```text
+@vscode how do I hide the JavaScript files in this project?
+```
+
+You should get back a completion that tells you how to hide the JavaScript files in the editor. Add that to a `.vscode/settings.json` file.
+
+> There is also a @workspace participant. It knows about your project. If the project is a public GitHub repo, then the participant uses the GitHub index. If it's not, the index is created locally for you on your machine. The participant then queries this index when you use it to ask a question. It will be able to know things like your project structure, the files in your project, what languages are being used, packages, et. 
+
+> So let's try this fix again and involve our local workspace expert. I'm going to highlight the line again and run the /fix command. But this time, I'm going to involve the @workspace participant.
+
+Make sure the query line is selected and add the following prompt to the Chat Sidebar:
+
+```text
+@workspace /fix
+```
+
+> This time, Copilot catches the error. The "TOP" keyword is not valid for Postgres. I didn't know that - I'm used to SQL Server. Apparently we're supposed to use LIMIT instead. Let's make that change. 
+
+Stop the running app in the node terminal window and then start again with: 
+
+```bash
+node app.js
+```
+
+Navigate to `http://localhost:3000/api/vehicles` in your browser. You should see a list of vehicles.
+
+> This is a great example of how Copilot can catch "silent errors". These are errors that aren't caught by the compiler or linter. Those are easier to resolve. The hard ones are the ones that fail only when the app runs. Copilot is _really_ good at fixing these errors and catching your silly mistakes. When asking for a /fix, I always like to involve the @workspace participant.
+
+> There is one more important concept to understsand when prompting Copilot - the idea of "variables".
+
+## Variables
+
+> Variables are a way to pass certain specific pieces of context to GitHub Copilot.
+
+> There are other participants as well. And you can even build your own. In fact, you can build your own extension that has full interaction with GitHub Copilot. For instance, I have an extension installed called "pg". And this participant is an expert on my database. My actual database. I have already given it the connection info. So I can ask it questions about the database - like what tables are there. It can write SQL for me. Or check this out - it can even generate a TypeScript model for the vehicles table because it knows the schema of my database!
+
+> This new Copilot extension API just came out, so as more and more extension authors add this, you're going to see some incredible uses of AI in your editor. Because it's not what we do with VS Code that's amazing - it's what _you_ think of that will actually allow AI to deliver on all these promises. GitHub Copilot just wants to help you get there.
+
+### Bonus Content
+
+You can add in some of these additional exercises / demos to fill out the remaining time.
 
 
 
