@@ -467,11 +467,33 @@ Navigate to `http://localhost:3000/api/vehicles` in your browser. You should see
 
 ## Variables
 
-> Variables are a way to pass certain specific pieces of context to GitHub Copilot.
+> Variables are a way to pass certain specific pieces of context to GitHub Copilot. For instance, we've talked about how important it is to always select the most relevant code to your prompt. But sometimes you need to reference an entire file. You can do this with a variable.
 
-> There are other participants as well. And you can even build your own. In fact, you can build your own extension that has full interaction with GitHub Copilot. For instance, I have an extension installed called "pg". And this participant is an expert on my database. My actual database. I have already given it the connection info. So I can ask it questions about the database - like what tables are there. It can write SQL for me. Or check this out - it can even generate a TypeScript model for the vehicles table because it knows the schema of my database!
+> For instance, right now we are returning JSON data from our controller, but we're not using a model. We're using an object and putting the directly in the response. Ideally we would tell the JSON what to convert to here. For that, we need a model. I happen to have some of the vehicle data from the database in a CSV file here. What we can do is to ask Copilot to generate a model for us. But we need to give it the context of the file.
 
-> This new Copilot extension API just came out, so as more and more extension authors add this, you're going to see some incredible uses of AI in your editor. Because it's not what we do with VS Code that's amazing - it's what _you_ think of that will actually allow AI to deliver on all these promises. GitHub Copilot just wants to help you get there.
+> Let's start a new chat in the chat sidebar. It's important to clear out old context since Copilot is using the history of this chat to inform it's answers. You can always roll back to a previous chat with the history button here.
+
+Clear the sidebar chat with the + button at the top.
+
+Enter the following prompt:
+
+```text
+create a typescript model that matches the shape of #file:vehicles.csv
+```
+
+You'll get a pop-up when you use the #file variable that you can use to select the file. Select the `vehicles.csv` file.
+
+Copilot should generate a model file for you. You can iterate on its result if it's not exactly what you want. If you get a verbose result, you can ask for a "simple" version.
+
+> Very handy. There are other variables that you can explore. You can see some experimental ones in here, because this is Insiders - like #web, that does a web search in the background to accompany your prompt. Or #terminalLastCommand which looks at the last command that was run in the terminal and the output. This can be great for debugging errors that you get in the terminal.
+
+> But this - what I just did - this is a bit of a contrived example. In the real world, you don't have a CSV file that matches your database just sitting around conveniently. No. You have a database. If only GitHub Copilot could know about _your_ database...
+
+> As you may know, quite possibly the best thing about VS Code isn't really VS Code at all. It's the extensions that are available. These are the things that make VS Code so powerful. If you're a VS Code user, you know exactly what I'm talking about and you likely have your own favorite extensions.
+
+> And now, extension authors can tie directly into GitHub Copilot to build their own participants, variables and slash commands. 
+
+> For instance, I have an extension installed called "PG Chat Participant". This extension adds a Postgres participant is an expert on my database. My actual database. I have already given it the connection info. So I can ask it questions about the database - like what tables are there. It can write SQL for me. And yes - it can generate that TypeScript model file directly from my database. BTW - this table has over 140K rows in it - not something that would be feasible to put in a CSV file! But it's no problem for the @pg participant.
 
 ### Bonus Content
 
