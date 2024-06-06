@@ -2,15 +2,17 @@
 
 Slides: https://microsoft-my.sharepoint.com/:p:/p/buhollan/EadM4RNYrTNAt92bh1-Tp5wBNX3shhWedXBiKEWXUtympQ?e=EMVgRr
 
-## Prerequisites
+## Demo Setup
+
+This file contains a dev container with all of the necessary dependencies, including a Postgres database. It is highly recommended that you use this dev container for the project.
+
+## Prerequisites (Skip for Dev Container)
 
 1. [VS Code - Insiders](https://code.visualstudio.com/insiders/)
 2. [GitHub Copilot](https://copilot.github.com/)
 3. [Regex Preview](https://marketplace.visualstudio.com/items?itemName=chrmarti.regex)
 4. [Postgres](https://www.postgresql.org/download/)
 5. [Postgres Chat Participant](https://marketplace.visualstudio.com/items?itemName=robconery.pg-chat)
-
-## Setup
 
 Add the following settings to your User Settings (JSON) file...
 
@@ -21,13 +23,30 @@ Add the following settings to your User Settings (JSON) file...
 },
 ```
 
-Rename the RENAME_ME.env to .env and add your Postgres connection string.
+### Dev Container
+
+After the container builds, open a terminal and run the following commands:
+
+```bash
+./setup/setup.sh
+```
+
+This will...
+
+1. Create a database called "demos" 
+2. Create a table called "vehicles" 
+3. Seed the table with some publicly available data on electric vehicles registered in the state of Washington
+4. Create a .env file and add the connection string for the database
+
+You're ready to go!
+
+## Demo Script
 
 > Crafting good prompts with GitHub Copilot depends a lot on how and where you are using GitHub Copilot. How you use Copilot is almost more important than the the prompt itself. There are essentially 3 interaction models that you'll use in VS Code when working with Copilot - Ghost Text, Inline Chat and Chat Sidebar / Quick Chat.
 
 > Knowing how and when to use these different interaction models is key to getting the most out of your prompt with Copilot. Let's take a look at each one in more detail.
 
-## Ghost Text
+### Ghost Text
 
 1. Open the app.ts file
 
@@ -200,7 +219,7 @@ const strippedMessage = message.removeHtmlTags()
 
 > So let's look at the next interaction model - Inline Chat.
 
-## Inline Chat
+### Inline Chat
 
 Setup by deleting everything in the `app.ts` file.
 
@@ -299,7 +318,7 @@ You should get back a command that will run in the terminal.
 
 > But there are times when you need to do a lot more. You need to have an actual conversation with Copilot. This happens a lot when you are brainstorming certain ideas, you need to examine more complex code, etc. This is where the Chat Sidebar comes in.
 
-## Chat Sidebar
+### Chat Sidebar
 
 > The Chat Sidebar is a more "traditional" chat interface. It's one that a lot of people are used to because of things like ChatGPT. And while you will spend a lot of time interacting with Copilot in the editor, the Chat Sidebar is where you can have a more in-depth conversation.
 
@@ -405,7 +424,7 @@ Navigate to `http://localhost:3000/api/vehicles` in your browser. You should see
 
 > There are some prompts that get written so often that they are actually baked into Copilot. We call these "Slash Commands".
 
-## Slash Commands
+### Slash Commands
 
 > Slash commands are pre-packaged and optimized prompts for common tasks. For instance, a common need is to document a function. Copilot has a slash command for that. 
 
@@ -431,7 +450,7 @@ Copilot will make some suggestion that is wrong.
 
 > In this case - I know this suggestion is wrong. My guess is that Copilot needs more context here. So I have a few options - I could select all of the text in the editor and run the /fix command again. But what I really need here is for Copilot to understand everything about my project. We've talked about how it doesn't know about every file. But there is a way to give it that context.
 
-## Participants
+### Participants
 
 > Participants are experts within Copilot on specific topics. They are "trained" (in a manner of speaking) on specific content. For instance, there is a @vscode participant. This participant is an expert in all things VS Code. We might ask this participant how to hide the JavaScript files in this project.
 
@@ -467,7 +486,7 @@ Navigate to `http://localhost:3000/api/vehicles` in your browser. You should see
 
 > There is one more important concept to understsand when prompting Copilot - the idea of "variables".
 
-## Variables
+### Variables
 
 > Variables are a way to pass certain specific pieces of context to GitHub Copilot. For instance, we've talked about how important it is to always select the most relevant code to your prompt. But sometimes you need to reference an entire file. You can do this with a variable.
 
@@ -497,7 +516,7 @@ Copilot should generate a model file for you. You can iterate on its result if i
 
 > For instance, I have an extension installed called "PG Chat Participant". This extension adds a Postgres participant is an expert on my database. My actual database. I have already given it the connection info. So I can ask it questions about the database - like what tables are there. It can write SQL for me. And yes - it can generate that TypeScript model file directly from my database. BTW - this table has over 140K rows in it - not something that would be feasible to put in a CSV file! But it's no problem for the @pg participant.
 
-### Bonus Content
+## Bonus Content
 
 You can add in some of these additional exercises / demos to fill out the remaining time.
 
