@@ -28,7 +28,7 @@ Add the following settings to your User Settings (JSON) file...
 After the container builds, open a terminal and run the following commands:
 
 ```bash
-./setup.sh
+./setup/setup.sh
 ```
 
 This will...
