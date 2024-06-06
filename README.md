@@ -1,4 +1,4 @@
-# Crafting Good Prompts with GitHub Copilot'
+# Crafting Good Prompts with GitHub Copilot
 
 Slides: https://microsoft-my.sharepoint.com/:p:/p/buhollan/EadM4RNYrTNAt92bh1-Tp5wBNX3shhWedXBiKEWXUtympQ?e=EMVgRr
 
@@ -28,7 +28,7 @@ Add the following settings to your User Settings (JSON) file...
 After the container builds, open a terminal and run the following commands:
 
 ```bash
-./setup/setup.sh
+./setup.sh
 ```
 
 This will...
