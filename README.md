@@ -1,4 +1,4 @@
-# Crafting Good Prompts with GitHub Copilot'
+# Crafting Good Prompts with GitHub Copilot
 
 Slides: https://microsoft-my.sharepoint.com/:p:/p/buhollan/EadM4RNYrTNAt92bh1-Tp5wBNX3shhWedXBiKEWXUtympQ?e=EMVgRr
 
