@@ -2,7 +2,7 @@ CREATE TABLE vehicles (
     vin VARCHAR(255) PRIMARY KEY,
     county VARCHAR(255),
     city VARCHAR(255),
-    state CHAR(2),
+    state VARCHAR(2),
     postal_code VARCHAR(10),
     model_year INT,
     make VARCHAR(255),
@@ -12,5 +12,8 @@ CREATE TABLE vehicles (
     electric_range INT,
     base_msrp INT,
     legislative_district INT,
-    dol_vehicle_id BIGINT
+    dol_vehicle_id BIGINT,
+    vehicle_location VARCHAR(255),
+    electric_utility VARCHAR(255),
+    census_tract_2020 VARCHAR(255)
 );

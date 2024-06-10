@@ -1,42 +1,87 @@
 #!/bin/bash
 
-DB_NAME="demos"
-DB_USER="postgres"
-
 # Install postgres and log it
 echo "Installing PostgreSQL..."
-apt-get update > /dev/null 2>&1
-apt-get install -y postgresql postgresql-contrib > /dev/null 2>&1
+apt-get update
+apt-get install -y postgresql postgresql-contrib
+echo "PostgreSQL installed."
+
+# Update the pg_hba.conf file to trust all connections
+echo "Trusting all connections (this is only OK because this is a local development environment)..."
+echo "host all all" >> /etc/postgresql/15/main/pg_hba.conf
+echo "local all all trust" >> /etc/postgresql/15/main/pg_hba.conf
 
 # Start the PostgreSQL service
-echo "Starting the PostgreSQL service..."
 service postgresql start
+echo "PostgreSQL service started."
 
-# Set password for the default postgres user
-echo "Setting password for the postgres user..."
-sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+DB_NAME="demos"
+DB_USER="postgres"
+DB_PASSWORD="postgres"
 
-# Create the "demos" database accessible by the "postgres" user if it doesn't exist
+# # Check if PostgreSQL is running, if not, try to start it
+# if ! pg_isready > /dev/null 2>&1; then
+#     echo "PostgreSQL is not running. Attempting to start..."
+#     pg_ctl start -D /var/lib/postgresql/data
+#     if [ $? -ne 0 ]; then
+#         echo "Failed to start PostgreSQL. Exiting..."
+#         exit 1
+#     fi
+# fi
+
+# Create the demos database
+# Create the demos database if it doesn't exist
 if ! psql -lqt | cut -d \| -f 1 | grep -qw $DB_NAME; then
-    echo "Creating the 'demos' database..."
-    sudo -u postgres psql -c "CREATE DATABASE $DB_NAME OWNER $DB_USER;"
+    createdb $DB_NAME
+    if [ $? -eq 0 ]; then
+        echo "Successfully created database $DB_NAME."
+    else
+        echo "Failed to create database $DB_NAME."
+        exit 1
+    fi
 else
     echo "Database $DB_NAME already exists. Skipping..."
 fi
 
-# Drop the "vehicles" table if it exists
-echo "Creating the 'vehicles' table..."
-sudo -u postgres psql -d demos -c "DROP TABLE vehicles;"
+# Drop the table if it exists
+psql -d $DB_NAME -c "DROP TABLE IF EXISTS vehicles;"
+if [ $? -eq 0 ]; then
+    echo "Successfully dropped table vehicles."
+else
+    echo "Failed to drop table vehicles."
+    exit 1
+fi
 
-# Execute the createTable.sql script to create the "vehicles" table
-sudo -u postgres psql -d demos -f setup/createTable.sql
+# Execute the createTable.sql script
+psql -d $DB_NAME -f setup/createTable.sql
+if [ $? -eq 0 ]; then
+    echo "Successfully executed createTable.sql."
+else
+    echo "Failed to execute createTable.sql."
+    exit 1
+fi
 
-# Import setup/ElectricVehicles.csv into the "vehicles" table
-echo "Importing data/ElectricVehicles.csv into the 'vehicles' table..."
-sudo -u postgres psql -d demos -c "\COPY vehicles FROM 'setup/ElectricVehicles.csv' WITH (FORMAT csv, HEADER true);"
+# Import the csv file into the table
+psql -d $DB_NAME -c "\COPY vehicles FROM 'setup/ElectricVehicles.csv' WITH (FORMAT csv, HEADER true);"
 
-# Create a .env file with the DATABASE_URL
-echo "Creating .env file with DATABASE_URL..."
-echo "DATABASE_URL=postgres://postgres:postgres@localhost/demos" > .env
+if [ $? -eq 0 ]; then
+    echo "Successfully imported data/ElectricVehicles.csv into the vehicles table."
+else
+    echo "Failed to import data/ElectricVehicles.csv."
+    exit 1
+fi
 
-echo "Setup complete!"
+# Connection string for the user
+CONNECTION_STRING="postgresql://localhost/$DB_NAME"
+echo "Connection string: $CONNECTION_STRING"
+
+# Create .env file if it doesn't exist
+if [ ! -f .env ]; then
+    echo "DATABASE_URL="$CONNECTION_STRING"" >> .env
+    echo ".env file created."
+else
+    echo ".env file already exists. Skipping..."
+fi
+
+echo "Setup finished. You are ready to go!"
+
