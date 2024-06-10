@@ -66,9 +66,7 @@ function reverse(str: string): string {
 }
 ```
 
-> In this example, we use GitHub Copilot to write a function that reverses a string. This is a simple example, so we don't need to provide a lot of context. And in this case, you can see that GitHub Copilot uses the context that it has - the fact that we're in a TypeScript file - to provide a completion that includes the type for the string parameter.
-
-> This is an important concept with GitHub Copilot - Simple. The more simple the solution, the more accurate GitHub Copilot will be. We generally talk about this as the 3S's - Simple, Specific and Short. When working with Ghost Text - try and keep your prompts simple, be specific in what you ask for and keep it short - move in steps and let GitHub Copilot build on what you have.
+> In this example, we use GitHub Copilot to write a function that reverses a string. In this case, our prompt is simple. You can see, though, that GitHub Copilot uses the context that it has - the fact that we're in a TypeScript file - to provide a completion that includes the type for the string parameter. This is done behind the scenes as part of the prompt that you don't see. 
 
 > The other way that you can "prompt" Ghost Text, is with a comment. So we could ask for a function that removes all HTML tags from a string.
 
@@ -86,9 +84,9 @@ function removeHtmlTags(str: string): string {
 }
 ```
 
-> Copilot gives us a regular express here. Because regex is hard for us as humans, but Copilot likes it and is really good at it. BUT, you never want to just assume that the regex is correct. Use your editor tools to check the regex. In this case, we'll use the Regex Preview extension to check the regex. "Trust, but verify" is a good rule of thumb when working with Copilot.
+> Copilot gives us a regular expression here. Because regex is hard for us as humans, but Copilot likes it and is really good at it. BUT, you never want to just assume that the regex is correct. Use your editor tools to check the regex. In this case, we'll use the Regex Preview extension to check the regex. "Trust, but verify" is a good rule of thumb when working with Copilot.
 
-> So a "prompt" when using Ghost Text is the code that is already in the editor and any comments that you've provided. You don't have much control over the prompt here - GitHub Copilot is doing that for you in the background. The best you can do is understand what Ghost Text knows about and is likely sending as part of the prompt.
+> So a "prompt" when using Ghost Text is the code that is already in the editor and any comments that you've provided. You don't have much control over the prompt here - GitHub Copilot is doing that for you in the background. The best you can do is understand what Ghost Text knows about and is likely sending as part of the prompt. You can also follow the 3's principal for best results with Ghost Text - Simple, Specific and Short. Ask for the simplest things you can and build from there. Be as specific as you can, and generally speaking, keep your prompts short.
 
 > One trick you can use with Ghost Text to get more control over the prompt is to use a comment at the top of a file.
 
@@ -129,7 +127,7 @@ String.prototype.capitalizeFirstLetter = function (): string {
 
 > Let's say we want to add one more function here. Let's add one that removes a specific character from a string. 
 
-Add a comment to the top of the file that says:
+Add a comment to the bottom of the file that says:
 
 ```typescript
 // removes a specific character from a string
@@ -143,9 +141,27 @@ String.prototype.removeCharacter = function (char: string): string {
 };
 ```
 
-> Notice that at this point, we don't have to tell it we want to extend the string prototype. We know that GitHub Copilot already knows about the rest of the code in this file, so we don't need to make that part of the prompt - it's already there.
+> Notice that at this point, we don't have to tell it we want to extend the string prototype. We know that GitHub Copilot already knows about the rest of the code in this file, so we don't need to make that part of the prompt - it's already there. 
 
-> Now we have an error because we're trying to add a function that we haven't defined in the interface. And guess what - GitHub Copilot already knows that as well. If we just put our cursor in the interface and add a new line, GitHub Copilot will add the correct function signature. In this case, we don't need a prompt AT ALL. You'll likely find that this is the most powerful and magical use case for AI - when it can anticipate what you need before you even ask for it. Because the best prompt is the one that you don't have to write.
+> Now we have an error because we're trying to add a function that we haven't defined in the interface. And guess what - GitHub Copilot already knows that as well. If we just put our cursor in the interface and add a new line, GitHub Copilot will add the correct function signature. 
+
+Place your cursor at the end of the `removeCharacter` function in the interface (~line 11) and press enter. GitHub Copilot should generate the following completion:
+
+```typescript
+    removeCharacter(char: string): string;
+```
+
+> In this case, we don't need a prompt AT ALL. You'll likely find that this is the most powerful and magical use case for AI - when it can anticipate what you need before you even ask for it. Because the best prompt is the one that you don't have to write.
+
+> And if we go to the comment at the top of the file, should GitHub Copilot be able to automatically add the new function to the comment? Yes, it should. And it does.
+
+Place the cursor at the end of line '3. removeHTMLTags' and press enter. GitHub Copilot should generate the following completion:
+
+```typescript
+// 4. removeCharacter - removes a specific character from a string
+```
+
+> When you know what GitHub Copilot knows, you know what to expect it to be able to do for you and now you actually have another programmer in here with you writing code. That's pretty remarkable.
 
 > Let's move our string functions to a different file. We'll use VS Code's built-in refactoring to do this.
 
@@ -270,7 +286,7 @@ return a static HTML file on the root route
 
 Copilot should iterate on it's previous response to add the static HTML file. Accept the final completion.
 
-> OK! Much better. We iterated on our prompt and got exactly what we wanted. But we still kept it pretty simple so that Copilot could do it's thing. But let's say that we've now dismissed the inline chat and we want to use chak to display a nice message that lets the user go directly to the site from the terminal. But we closed the chat. How do we iterate on that prompt now?
+> OK! Much better. We iterated on our prompt and got exactly what we wanted. But we still kept it pretty simple so that Copilot could do it's thing. But let's say that we've now dismissed the inline chat and we want to use chalk to display a nice message that lets the user go directly to the site from the terminal. But we closed the chat. How do we iterate on that prompt now?
 
 > All we need to do is select the code we want to deal with and bring Inline Chat back. 
 
@@ -280,7 +296,7 @@ Select just the code that starts the server and press Cmd/Ctrl + I to open the I
 use chalk to display the app url
 ```
 
-Copilot should not only add the chalk code to the highlighted method, but it should add the import at the top of the file as well.
+Copilot should not only add the chalk code to the highlighted method, but it should add the import at the top of the file as well. If it does not add the chalk import, you can fall back to the Ghost Text model where you put your cursor in the imports section and press enter for Copilot to add it automatically.
 
 > Notice what happened here - Copilot had to update our file in 2 places: the code that uses chalk AND the import. This is a good example of how Inline Chat is parsing the prompt in the background to try and help you out. It's not enough to update the code we've selected - we also need to update a part of the file that wasn't even included in the prompt. Or was it? Let's look at the prompt!
 
@@ -312,7 +328,13 @@ Add the following prompt to the Inline Chat in the terminal:
 compile app.ts
 ```
 
-You should get back a command that will run in the terminal.
+You should get back a command similar to: 
+
+```bash
+tsc app.ts
+```
+
+You can run this in the terminal, but make sure to only run the `tsc` part. Omit the `app.ts` part. This is so the TypeScript compiler will look for a `tsconfig.json` file in the current directory and compile all of the TypeScript files in the project.
 
 > Great! Now let's run this with Node - and there we go - up an running.
 
@@ -464,6 +486,14 @@ You should get back a completion that tells you how to hide the JavaScript files
 
 > There is also a @workspace participant. It knows about your project. If the project is a public GitHub repo, then the participant uses the GitHub index. If it's not, the index is created locally for you on your machine. The participant then queries this index when you use it to ask a question. It will be able to know things like your project structure, the files in your project, what languages are being used, packages, et. 
 
+Add the following prompt to the sidebar...
+
+```text
+@workspace what kind of project is this and what is it doing
+```
+
+> You can see that the chat now knows a LOT about my project. It knows that it's TypeScript, it knows that it's Express. It knows that it uses Postgres. It knows that we're working with vehicle data. It even knows about our String class! Nice!
+
 > So let's try this fix again and involve our local workspace expert. I'm going to highlight the line again and run the /fix command. But this time, I'm going to involve the @workspace participant.
 
 Make sure the query line is selected and add the following prompt to the Chat Sidebar:
@@ -514,11 +544,50 @@ Copilot should generate a model file for you. You can iterate on its result if i
 
 > And now, extension authors can tie directly into GitHub Copilot to build their own participants, variables and slash commands. 
 
-> For instance, I have an extension installed called "PG Chat Participant". This extension adds a Postgres participant is an expert on my database. My actual database. I have already given it the connection info. So I can ask it questions about the database - like what tables are there. It can write SQL for me. And yes - it can generate that TypeScript model file directly from my database. BTW - this table has over 140K rows in it - not something that would be feasible to put in a CSV file! But it's no problem for the @pg participant.
+> For instance, I have an extension installed called "PG Chat Participant". This extension adds a Postgres participant is an expert on my database. My actual database. I have already given it the connection info. So I can ask it questions about the database - like what tables are there. 
+
+In the chat sidebar, ask the Postgres participant for the tables in the database:
+
+```text
+@pg /show
+```
+
+> It can write also write SQL queries for me. 
+
+Add the following prompt to the Chat Sidebar:
+
+```text
+@pg select all the cars from the vehicles table that are a TESLA
+```
+
+It should return a query you can run directly in the editor.
+
+> Notice that I never mentioned the column name here. Copilot does this on its own - it's doing the thinking for me. And it can handle a lot of complexity. We've worked with it a lot and it can handle pretty nasty joins and things like common table expressions as well. You just tell it what you want and because it knows the schema of the database, it can write the query for you.
+
+> And yes - it can generate that TypeScript model file directly from my database. BTW - this table has over 140K rows in it - not something that would be feasible to put in a CSV file! But it's no problem for the @pg participant.
+
+Add the following prompt to the Chat Sidebar:
+
+```text
+@pg generate a typescript model for the vehicles table
+```
+
+> And there we go - a model file that matches the shape of the vehicles table in my database.
+
+Go back to slides for Conclusions & Wrap Up.
 
 ## Bonus Content
 
-You can add in some of these additional exercises / demos to fill out the remaining time.
+You can add in some of these additional exercises / demos to fill out any remaining time.
 
+### Testing
+
+> Testing is a great use case for GitHub Copilot. This is because tests are mostly boilerplate. They are reptitive and are often derrived from your implementation, unless you're doing something like TDD.
+
+> Let's start by creating a test file for our `vehicleController`. The problem is, I don't know much about testing. So I'm not sure how to even set tests up here. Based on what we've learned so far, what is the best way for us to interact with GitHub Copilot in this scenario?
+
+Pause and let people suggest. The answer is something like "Chat Sidebar" or "Brainstorm". We're looking for an answer that shows that people understand that Ghost Text or Inline Chat is probably not the best way to go here.
+
+> Exactly. We need to do a little Q&A with Copilot. Let's start a new chat in the Chat Sidebar.
 
 
