@@ -42,405 +42,253 @@ You're ready to go!
 
 ## Demo Script
 
+> Imagine this - you're a developer working for an agency you've been tasked with creating a dashboard for all electric vehicles registered in the state. The data is stored in Postgres, and you decide to use Express for the web application. You also decide to use TypeScript since that's what your agency is standardized on for all JavaScript projects.
+
+> Instead of starting with a scaffolded Express application, we're going to start from scratch to do this so we can see where and how to write good prompts with GitHub Copilot.
+>
 > Crafting good prompts with GitHub Copilot depends a lot on how and where you are using GitHub Copilot. How you use Copilot is almost more important than the the prompt itself. There are essentially 3 interaction models that you'll use in VS Code when working with Copilot - Ghost Text, Inline Chat and Chat Sidebar / Quick Chat.
-
+>
 > Knowing how and when to use these different interaction models is key to getting the most out of your prompt with Copilot. Let's take a look at each one in more detail.
-
-### Ghost Text
-
-1. Open the app.ts file
-
-> Ghost Text" is the term we use to describe the inline completions that GitHub Copilot provides in the editor. 
-
-1. Start by typing out a function to reverse a string. GitHub Copilot should complete this for you.
-
-```typescript
-function reverse
-```
-
-2. You should see a completion that looks like this. You may or may not get the type for string. If you do, call it out.
-
-```typescript
-function reverse(str: string): string {
-  return str.split('').reverse().join('')
-}
-```
-
-> In this example, we use GitHub Copilot to write a function that reverses a string. In this case, our prompt is simple. You can see, though, that GitHub Copilot uses the context that it has - the fact that we're in a TypeScript file - to provide a completion that includes the type for the string parameter. This is done behind the scenes as part of the prompt that you don't see. 
-
-> The other way that you can "prompt" Ghost Text, is with a comment. So we could ask for a function that removes all HTML tags from a string.
-
-Underneath the function that you just wrote, add a comment that says:
-
-```typescript
-// A function that removes all HTML tags from a string
-```
-
-This should generate a completion that looks like this. 
-
-```typescript
-function removeHtmlTags(str: string): string {
-  return str.replace(/<[^>]*>/g, '')
-}
-```
-
-> Copilot gives us a regular expression here. Because regex is hard for us as humans, but Copilot likes it and is really good at it. BUT, you never want to just assume that the regex is correct. Use your editor tools to check the regex. In this case, we'll use the Regex Preview extension to check the regex. "Trust, but verify" is a good rule of thumb when working with Copilot.
-
-> So a "prompt" when using Ghost Text is the code that is already in the editor and any comments that you've provided. You don't have much control over the prompt here - GitHub Copilot is doing that for you in the background. The best you can do is understand what Ghost Text knows about and is likely sending as part of the prompt. You can also follow the 3's principal for best results with Ghost Text - Simple, Specific and Short. Ask for the simplest things you can and build from there. Be as specific as you can, and generally speaking, keep your prompts short.
-
-> One trick you can use with Ghost Text to get more control over the prompt is to use a comment at the top of a file.
-
-Delete everything in the `app.ts` file.
-
-Add a comment at the top of the file that says:
-
-```typescript
-// This file extends the string prototype with some useful functions...
-// 1. reverse - reverses a string
-// 2. removeHtmlTags - removes all HTML tags from a string
-// 3. capitalizeFirstLetter - capitalizes the first letter of a string 
-```
-
-Press enter after the comment and GitHub Copilot should start generating the correct code for you to do exactly what the prompt says in the comment.
-
-```typescript
-interface String {
-    reverse(): string;
-    removeHtmlTags(): string;
-    capitalizeFirstLetter(): string;
-}
-
-String.prototype.reverse = function (): string {
-    return this.split('').reverse().join('');
-};
-
-String.prototype.removeHtmlTags = function (): string {
-    return this.replace(/<[^>]*>/g, '');
-};
-
-String.prototype.capitalizeFirstLetter = function (): string {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-};
-```
-
-> In this case, we asked more of GitHub Copilot with the prompt, but we also gave it a lot more context. This strategy of using bullets when talking with GitHub Copilot is a great way to give it more context. The more context you give it, the more accurate it will be. Notice that even though this file is doing quite a bit, it's still simple, specific and short.
-
-> Let's say we want to add one more function here. Let's add one that removes a specific character from a string. 
-
-Add a comment to the bottom of the file that says:
-
-```typescript
-// removes a specific character from a string
-```
-
-Copilot generates the following completion:
-
-```typescript
-String.prototype.removeCharacter = function (char: string): string {
-    return this.replace(new RegExp(char, 'g'), '');
-};
-```
-
-> Notice that at this point, we don't have to tell it we want to extend the string prototype. We know that GitHub Copilot already knows about the rest of the code in this file, so we don't need to make that part of the prompt - it's already there. 
-
-> Now we have an error because we're trying to add a function that we haven't defined in the interface. And guess what - GitHub Copilot already knows that as well. If we just put our cursor in the interface and add a new line, GitHub Copilot will add the correct function signature. 
-
-Place your cursor at the end of the `removeCharacter` function in the interface (~line 11) and press enter. GitHub Copilot should generate the following completion:
-
-```typescript
-    removeCharacter(char: string): string;
-```
-
-> In this case, we don't need a prompt AT ALL. You'll likely find that this is the most powerful and magical use case for AI - when it can anticipate what you need before you even ask for it. Because the best prompt is the one that you don't have to write.
-
-> And if we go to the comment at the top of the file, should GitHub Copilot be able to automatically add the new function to the comment? Yes, it should. And it does.
-
-Place the cursor at the end of line '3. removeHTMLTags' and press enter. GitHub Copilot should generate the following completion:
-
-```typescript
-// 4. removeCharacter - removes a specific character from a string
-```
-
-> When you know what GitHub Copilot knows, you know what to expect it to be able to do for you and now you actually have another programmer in here with you writing code. That's pretty remarkable.
-
-> Let's move our string functions to a different file. We'll use VS Code's built-in refactoring to do this.
-
-Highlight all of the text in the file and press Cmd/Ctrl + . to bring up the quick fix menu. Select "Move to a new file" and name the file. VS Code will move all of this to a file called `String.ts`.
-
-Open the sidebar and note that the `String.ts` file has been created, but **do not open it**.
-
-> We'll import the new `String.ts` file into our `app.ts` file and start using the functions that we created.
-
-Add the following import statement to the top of the `app.ts` file:
-
-```typescript
-import './String'
-
-const message = 'Hello, <strong>world</strong>!'
-```
-
-> Now we ask GitHub Copilot to reverse the message
-
-Start typing the following code...
-
-```typescript
-const reversedMessage 
-```
-
-GitHub Copilot should complete this for you.
-
-```typescript
-const reversedMessage = message.reverse()
-```
-
-> Awesome! Now let's remove those pesky HTML tags. 
-
-Write a comment that says:
-
-```typescript
-// strip out all HTML tags
-```
-
-Copilot should get this wrong. It will likely generate a completion that looks like this:
-
-```typescript
-const strippedMessage = message.stripTags();
-```
-
-Note - If GitHub Copilot gets this right, make sure that `String.ts` **is not open** in the editor. Remove the line and restart the editor. Try the prompt again.
-
-> Whoa. What happened here? That's not the function we wanted. And if we look at the string object, we can see our function is clearly there. 
-
-Delete the bad function and press the `.` key after the `message` to see the intellisense. Look for the `removeHtmlTags` function. 
-
-> VS Code knows about the correct function. It's right there. Why is GitHub Copilot getting this wrong?
-
-> It's because GitHub Copilot doesn't know about this function at all - despite the fact that it **just wrote it**. Why? Because it's in a different file. GitHub Copilot doesn't know about the functions in the `String.ts` file because it's not open in the editor. This is important to understand. GitHub Copilot is not like you - it does not have an infinite memory. It only knows about what's in the editor at the time, as well as some of the code that's in other open tabs. In this case, if we want Copilot to know about the functions in the `String.ts` file, we need to open that file as a tab in the editor.
-
-Open the `String.ts` file and try the prompt again:
-
-```typescript
-// strip out all HTML tags
-```
-
-This time, GitHub Copilot should generate the correct completion:
-
-```typescript
-const strippedMessage = message.removeHtmlTags()
-```
-
-> So with Ghost Text, remember these things - Keep your prompts simple, specific and short. Keep related files open in tabs so that GitHub Copilot can see the code that you're working with. And remember to give Copilot a chance to anticpate your next move - it's really good at that. 
-
-> Now, Ghost Text is powerful, but there are limitations. First off, prompting copilot with a bunch of comments is going to leave a bunch of comments weird comments strewn throughout your code. I mean you _should_ comment your code, but not like this. These comments are only for Copilot, not for you or anyone else that might read your code. There is also the issue of interation. There isn't really a good way to have an interaction here with GitHub Copilot. To correct it's answer, change the subject, add more context - etc. 
-
-> So let's look at the next interaction model - Inline Chat.
-
-### Inline Chat
-
-Setup by deleting everything in the `app.ts` file.
-
-> Inline chat is exactly what it sounds like - a chat that you have with GitHub Copilot right in the editor. For example, lets start here in this empty file by asking for something a bit more complex. But we're still going to keep it as simple as possible. Let's build a web server using Express.
-
-Press Cmd/Ctrl + I to open the Inline Chat interface and add the following prompt:
-
-```text
-a simple express server
-```
-
-Copilot should generate the following completion. Do not accept it:
-
-```typescript
-import express from 'express';
-
-const app = express();
-const port = 3000;
-
-app.get('/', (req, res) => {
-    res.send('Hello, world!');
-});
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
-```
-
-> This is kind of what we want, but not really. For instance, we're missing types for req and res, and maybe we want to return a static HTML file instead of just a string. We could have put that in the intial prompt. But we didn't. And this is the tricky part about prompt engineering - it's mostly trial and error. We didn't know that Copilot wasn't going to give us the types and maybe we just forgot about the static HTML file. Prompts should be iterative - you should be able to build/change them on the fly. And you can do exactly that with Inline Chat.
-
-> So let's correct a few of these things. First, let's ask for types.
-
-With the inline suggestion still open, remove the text in the inline chat box and add the following prompt:
-
-```text
-add types to req and res
-```
-
-Copilot should iterate on it's previous response to add the types. Do not accept it:
-
-> Now let's ask for a static HTML file to be returned on that root route.
-
-With the inline suggestion still open, remove the text in the inline chat box and add the following prompt:
-
-```text
-return a static HTML file on the root route
-```
-
-Copilot should iterate on it's previous response to add the static HTML file. Accept the final completion.
-
-> OK! Much better. We iterated on our prompt and got exactly what we wanted. But we still kept it pretty simple so that Copilot could do it's thing. But let's say that we've now dismissed the inline chat and we want to use chalk to display a nice message that lets the user go directly to the site from the terminal. But we closed the chat. How do we iterate on that prompt now?
-
-> All we need to do is select the code we want to deal with and bring Inline Chat back. 
-
-Select just the code that starts the server and press Cmd/Ctrl + I to open the Inline Chat interface. Add the following prompt:
-
-```text
-use chalk to display the app url
-```
-
-Copilot should not only add the chalk code to the highlighted method, but it should add the import at the top of the file as well. If it does not add the chalk import, you can fall back to the Ghost Text model where you put your cursor in the imports section and press enter for Copilot to add it automatically.
-
-> Notice what happened here - Copilot had to update our file in 2 places: the code that uses chalk AND the import. This is a good example of how Inline Chat is parsing the prompt in the background to try and help you out. It's not enough to update the code we've selected - we also need to update a part of the file that wasn't even included in the prompt. Or was it? Let's look at the prompt!
-
-Open the Bottom Panel in VS Code and select the "Output" tab. Select "GitHub Copilot Chat" from the drop down. Scroll up until you see "SYSTEM". Below this you will see the system prompt.
-
-> Here we have the SYSTEM prompt. This is what Copilot is sending for you as part of the prompt that you don't have to write. For instance, it is using a "Role" strategy here - assigning Copilot a role as an AI programming assistant. Part of that role is being an "expert" in TypeScript. Then it tells the AI that it will be sending all of the code, and just the code that the user has selected. If we scroll down a bit, we'll see "USER". That's your prompt. Well, kind of. The first part is a USER prompt that Copilot assembled for you. It's a summary of the context - the entire code in the viewable editor space, as well as the code that is selected. The second user prompt is the one that you actually wrote. But again we see another line we did not write - "the modified code...". Behind the scenes GitHub Copilot is engineering a pretty impressive prompt for you. You are part of that engineering. When you select code, you're helping. When you are simple, specific and short - you are helping!
-
-> Now, Inline Chat can be found in the editor, but it can also be found in the terminal.
-
-Open the terminal in VS Code and press Ctrl/Cmd + I to open the inline chat.
-
-> Your terminal is a different environment than your code. Maybe it's bash, or zsh - or in my example, PowerShell. That means that Copilot in your terminal needs to know about your terminal when you ask a question. So let's ask a question that is specific to PowerShell.
-
-In the terminal, add the following prompt:
-
-```text
-get the total number of folders in node_modules
-```
-
-You should get back a command that will run in the terminal.
-
-> Notice that we get back a specific command that we can run with Cmd/Ctrl + Enter. We don't get back any explanatory text. This is because we asked a very specific thing. Remember - simple, specific and short.
-
-> Let's ask Copilot how we can compile the TypeScript in this project.
-
-Add the following prompt to the Inline Chat in the terminal:
-
-```text
-compile app.ts
-```
-
-You should get back a command similar to: 
-
-```bash
-tsc app.ts
-```
-
-You can run this in the terminal, but make sure to only run the `tsc` part. Omit the `app.ts` part. This is so the TypeScript compiler will look for a `tsconfig.json` file in the current directory and compile all of the TypeScript files in the project.
-
-> Great! Now let's run this with Node - and there we go - up an running.
-
-> But there are times when you need to do a lot more. You need to have an actual conversation with Copilot. This happens a lot when you are brainstorming certain ideas, you need to examine more complex code, etc. This is where the Chat Sidebar comes in.
 
 ### Chat Sidebar
 
-> The Chat Sidebar is a more "traditional" chat interface. It's one that a lot of people are used to because of things like ChatGPT. And while you will spend a lot of time interacting with Copilot in the editor, the Chat Sidebar is where you can have a more in-depth conversation.
+> Before we get started, we want to do a little brainstorming about how we're going to structure this project. The GitHub Copilot Chat sidebar is perfect for this kind of thing. I want Copilot to suggest to me a structure for this application. I'm going to tell it what I'm trying to do, then I'm going to ask it to suggest a structure. And then, I'm going to use a Q&A strategy here to have the model ask me questions before it suggests an answer.
 
-> Let's start by opening the Chat Sidebar. Press Cmd/Ctrl + B to open the sidebar and you'll see the chat icon. Click on that to open the Chat Sidebar.
-
-Open the Chat Sidebar.
-
-> Now let's do some more complex brainstorming here. What I want to do is build an application to display electric vehicle data that I have in a postgres database. We already have the simple Express server, but I would like some help with how I should structure the application. 
-
-Add the following prompt to the Chat Sidebar:
+Add the following prompt to the chat sidebar...
 
 ```text
-I am building an express web application that displays electric vehicle data from a database. Ask me 5 questions about my project that will help you suggest a good file and folder structure.
+i am building an application to display electric vehicle data. I want to use express and typescript. Give me some options for how to structure this app. Ask me clarifying questions that will help you suggest the right folder structure.
 ```
 
-It's hard to know exactly what you'll get back here, but it's likely that it's a list of 5(ish) questions. You can answer them yes/no, or with more context...
+> This prompt strategy is particulary useful because not only does it show how the model is thinking about this problem, it jogs my brain for things that I maybe had not thought of.
+> 
+> I'm can answer a lot of these with a simple yes or no.
+
+The model should ask you questions. You can answer them with simple "Yes" or "No" with additional information if required. Separate your answers with a comma
+
+> And it gives me this nice folder structure with some information about the structure. This is a bit verbose. You'll find that Copilot does this a lot - it's sort of thinking out loud here, but it's often too much to read - a small documentation article. So we're going to use the magic prompt word, which you'll see me use a lot today, and that is, "simple". Including this word in your prompts helps keep Copilot from trying to do too much, and makes it easier to quickly understand the response.
+
+In the Chat Sidebar type the word "simplify". The model should return a much shorter, more simple response.
+
+> OK, I feel pretty good about this folder structure - let's get started writing some code. I'm going to start with an empty `app.ts` file and create the basic express server. For this, I'm going to use something called "Inline Chat".
+
+Create a new file in the root of the project called `app.ts`.
+
+### Inline Chat
+
+> Inline Chat is how you can talk to Copilot from within your file. You should use Inline Chat when you want Copilot to write code _for_ you as part of the response.
+
+Press Cmd / Ctrl + I to open Inline Chat. Add the following prompt...
 
 ```text
-1. postgres
-2. No
-3. No
-4. Yes - use Jest
-5. No
+simple express server using typescript
 ```
 
-Press "Enter" again and GitHub Copilot will return a folder structure along with some explanation of what it all does.
+Do not accept the models response, but leave the suggestion up. You will be iterating on it.
 
-> Here we used a strategy of having Copilot ask us questions. You can do this - you don't have to be the one asking all the questions. This is a great way to get Copilot to jog your brain for things you haven't thought of yet. Another strategy that you can use here is to ask for variations along with the trade-offs of each approach.
-
-Add the following prompt to the Chat Sidebar:
+The model may or may not return a response that includes types for `req` and `res`. If it does not, you'll need to factor that into the next part where you iterate on the response. 
 
 ```text
-i want to create a db access file for postgres that uses one connection per session. give me some options for how to do this - include tradeoffs
+use types for req and res
 ```
 
-You should get back a few different options along with some trade-offs.
+#### Iteration with Inline Chat
 
-> Let's use Option 1 here and ask for a few alterations to the code copilot suggested.
+> This response is mostly what I want. But I forgot to tell it that I want it to serve a static HTML file for the root route. I've prepared this HTML file just for this demo and I want to serve that. So let's tweak the prompt..
 
-Add the following prompt to the Chat Sidebar:
+Remove all the text from the Inline Chat box and type...
 
 ```text
-Use option 1. Use .env file for settings.
+serve public/index.html from the root route
 ```
 
-You should get back a completion that uses the .env file for settings. Click the ellipsis on the code block and select "Insert into New File". Name the file `db.ts`.
+Accept the suggestion
 
-> Now let's take some of the earlier folder structure suggestions - specifically having a "controllers" folder. I like this pattern. For the sake of time I'll add the vehicle controllers code and the vehicle router code to this project. 
+> The suggestion is now updated with the static HTML file being served - which required the path module from Node and a configuration of a static directory. Iteration is key with Copilot. Copilot doesn't know exactly what you want, and there is a high likelihood that _you don't know that either_.
 
-Add a file to the project called `controllers/vehicleController.ts` and add the following code:
+> For instance, I've just realized, in this demo, that serving up a static HTML file probably isn't the best example of an Express app in real life - usually Express apps have views and use a template laguage. This static HTML file feels like a bit of a cop-out. But I've already accepted the selection? Now what?
+
+#### The Importance Of Selecting Text
+
+> I can resume my iteration by selecting all of the text here and opening the Inline Chat again. This is a good habit to get into with GitHub Copilot - select the relevant text from the editor when you use either inline or sidebar chat. This selected text always gets sent with the prompt, so it's a good way to know that you are providing the right context.
+
+Select all of the text in the file and open the Inline Chat with Ctrl/Cmd + I.
+
+Enter "use the pug view engine" for the prompt.
+
+Accept the suggestion from Inline Chat.
+
+Update the `app.get` route to pass an empty vehicles array to the template
 
 ```typescript
-import { Request, Response } from 'express';
-import { query } from '../data/db';
-
-export const getAllVehicles = async (req: Request, res: Response) => {
-    try {
-        const result = await query('SELECT TOP 100 * FROM vehicles', []);
-        res.json(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'An error occurred while fetching vehicles' });
-    }
-};
+app.get('/', (req, res) => {
+    res.render('index', { vehicles: [] });
+});
 ```
 
-Add a file to the project called `routes/vehicleRouter.ts` and add the following code:
+> OK! Now we've got Pug wired up as our view engine. But now my HTML file is useless since we're using Pug instead. 
 
-```typescript
-import express from 'express';
-import { getAllVehicles } from '../controllers/vehicleController';
+Open the public/index.html file. Rename it to "views/index.pug". Select all of the text and trigger the inline chat with Ctrl + I and enter the following prompt...
 
-const vehicleRouter = express.Router();
-
-vehicleRouter.get('/', getAllVehicles);
-
-export default vehicleRouter;
+```text
+convert this to pug
 ```
 
-Leave both of these tabs up and return the `app.ts` file. 
+> GitHub Copilot is really good at translating between different languages and formats. Here it converts the markup to Pug AND it updates the logic to reference a Pug variable called "vehicle". However, it doesn't delete the JavaScript at the bottom. Deleting code is a big deal. You want to be very careful about that with an AI Tool, so Copilot leaves that part in case we still want it. We don't, so we can delete it.
 
-> Now let's import the `vehicleController`. We have it open as a tab so we can be relatively sure the Copilot knows about it. And when we ask for the import, we'll get the correct completion. Even better, remember that Ghost Text can anticipate, so if we move down to use the router and press enter, Copilot will likely use the router for us. Then we can tweak the URL just slightly.
+Delete all of the JavaScript from the first script tag until the end of the file, including the Vue include.
 
-> Let's compile again - this time we'll add a watch flag so that we can see the changes in real time. And we'll run the server. If we head over to /api/vehicles, we should see the data.
+> Ok! We've done a lot of work. Well, Copilot has done a lot of work. Good job, pair programmer! Let's make sure what we've got so far is working.
 
-In the terminal, stop the node server and run the following command:
+Open the terminal in VS Code.
+
+> We'll initialize a new TypeScript configuration here so that we can compile our TypeScript files and run this.
 
 ```bash
-tsc -w
+tsc --init
 ```
 
-Open a new terminal tab and run the following command:
+> Before we compile this, though. I want to check and see if the NODE_ENV variable is set in this environment. The same inline chat that you use in the editor is also available in the terminal. 
+
+```text
+print out all env vars
+```
+
+> It looks like that variable is NOT set. I can never remember how to set it, so let's ask for that. Notice that when we do, we get an answer that we can update with the value we want for the var. The terminal inline chat knows about my terminal - and suggests the right PowerShell Commands for me.
+
+> As a side note, the terminal inline chat is one of my favorite features of Copilot because now I can do anything. For instance, I can ask how many folders are in the node_modules folder. Just in case you're curious how many dependencies it takes to run an Express app.
+
+```text
+count the number of folders in node_modules
+```
+
+> OK, let's compile and run.
 
 ```bash
+tsc
 node app.js
 ```
 
-Navigate to `http://localhost:3000/api/vehicles` in your browser. You should see "server error".
+This should start the app and you can navigate to `http://localhost:3000` in your browser to see the app.
 
-> OK - we have an error here. Let's go back to the `vehicleController` and see what's going on.
+### Ghost Text
+
+> Now, so far GitHub Copilot has written a lot of code. Strike that, it's written _all_ the code. And this is because this is a demo and these examples are simple. In the real world, this won't be the case. The code you'll be working with is too complex for GitHub Copilot to just write all of it. In the real-world, the iteraction that you'll likely use the most often with GitHub Copilot is "Ghost Text".
+
+Create a file called "data/db.ts".
+
+Add the following import...
+
+```typescript
+import pg from 'pg'
+```
+
+> Ghost Text are the completions that you'll get in your editor. And they are _powerful_. They are powerful because the prompt is your code. It is also any other tabs that you might have open. This is the context that GitHub Copilot uses to provide completions.
+
+> Another way to get a completion is to use a comment. We might call this "comment driven development".
+
+Add the following comment
+
+```typescript
+// create a new connection pool
+```
+
+> Note that I have to know at this point that I need a connection pool. Copilot could have told us this, but we already know, so we do it. But Copilot helps with completions as we're typing.
+
+Start typing the following code and let completions help you out...
+
+```typescript
+const pool = new pg.Pool({
+```
+
+The final code should look like this...
+
+```typescript
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+```
+
+> I want to expose a function that will allow me to query the database. And once again, completions help me out here.
+
+Start typing the following code and let completions help you out...
+
+```typescript
+export async function query(
+```
+
+The final code should look like this...
+
+```typescript
+function query(text: string, params: any[]) {
+  return pool.query(text, params);
+}
+```
+
+> Finally, we want to export something here. I'm assuming that Copilot will anticipate this and give me a completion for it without having to type anything at all. 
+
+Press "Enter" after the `query` function and Copilot should generate the following completion...
+
+```typescript
+export default {
+  query,
+};
+```
+
+> One thing you may have noticed is that Copilot uses the process.env, but we likely have that connection info in a file. We need to read that file in. We can use the dotenv package to do that.
+
+Put your cursor at the end of the "pg" import and press "Enter". Copilot should generate the following completion...
+
+```typescript
+import dotenv from 'dotenv';
+```
+
+> Copilot is now anticipating what I need and I don't need to ask for anything. This is when Copilot is truly magical. I just need to know that I need it, I don't actually have to even ask for it.
+
+Press "Enter" again after the `dotenv` import and Copilot should autmoatically add the following completion...
+
+```typescript
+dotenv.config();
+```
+
+> Again - I have to know that I need this. I can't stress this enough - the more that you know what you are doing, the better results you will get from Copilot. There is no substitute for experience, y'all. Copilot can increase your productivity, but that is directly proportional to your ability and knowledge of the code you are working with.
+
+> OK, we have a database connection, let's create a service to retrieve all the vehicle data. For the sake of speed, I have a snippet for that. And then finally we need a route file too - so again - pretend we wrote all of this beautiful code.
+
+Add a file called "services/vehicleService.ts" and add the following code...
+
+```typescript
+import { Request, Response } from 'express';
+import db from '../data/db'; // Ensure this path is correct for your project structure
+
+const vehicleService = {
+    async getAllVehicles() {
+        try {
+            const result = await db.query('SELECT * FROM vehicles LIMIT 100', []);
+            return result.rows;
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
+
+    }
+}
+
+export default vehicleService;
+```
+
+> And let's use this service on the root route to return data to our view.
+
+Modify the root route in `app.ts` to be the following...
+
+```typescript
+app.get('/', async (req: Request, res: Response) => {
+    const vehicles = await vehicleService.getAllVehicles();
+    res.render('index', { title: 'Vehicles', vehicles: vehicles });
+});
+```
+
+> OK - let's run and see if we a vehicle dashboard. We do not! We have an error. 
 
 > Copilot does a lot behind the scenes to compose prompts for you - we've seen that. A lot of it is done for you. As we've seen selecting text is always a good option when asking a question. Having the relevant code open is also always a good idea since Copilot always passes whatever is in the visible editor space. 
 
@@ -449,6 +297,8 @@ Navigate to `http://localhost:3000/api/vehicles` in your browser. You should see
 ### Slash Commands
 
 > Slash commands are pre-packaged and optimized prompts for common tasks. For instance, a common need is to document a function. Copilot has a slash command for that. 
+
+Open the vehicleService file and make sure it is visible in the editor.
 
 Select the `getAllVehicles` function. Press Cmd/Ctrl + I to open Inline Chat and add the following prompt:
 
@@ -520,7 +370,7 @@ Navigate to `http://localhost:3000/api/vehicles` in your browser. You should see
 
 > Variables are a way to pass certain specific pieces of context to GitHub Copilot. For instance, we've talked about how important it is to always select the most relevant code to your prompt. But sometimes you need to reference an entire file. You can do this with a variable.
 
-> For instance, right now we are returning JSON data from our controller, but we're not using a model. We're using an object and putting the directly in the response. Ideally we would tell the JSON what to convert to here. For that, we need a model. I happen to have some of the vehicle data from the database in a CSV file here. What we can do is to ask Copilot to generate a model for us. But we need to give it the context of the file.
+> For instance, right now we are returning JSON data from our service, but we're not using a model. Ideally we would return an array of vehicle model objects. For that, we need a model. I happen to have some of the vehicle data from the database in a CSV file here. What we can do is to ask Copilot to generate a model for us. But we need to give it the context of the file.
 
 > Let's start a new chat in the chat sidebar. It's important to clear out old context since Copilot is using the history of this chat to inform it's answers. You can always roll back to a previous chat with the history button here.
 
