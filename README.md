@@ -42,17 +42,11 @@ You're ready to go!
 
 ## Demo Script
 
-> Imagine this - you're a developer working for an agency you've been tasked with creating a dashboard for all electric vehicles registered in the state. The data is stored in Postgres, and you decide to use Express for the web application. You also decide to use TypeScript since that's what your agency is standardized on for all JavaScript projects.
-
-> Instead of starting with a scaffolded Express application, we're going to start from scratch to do this so we can see where and how to write good prompts with GitHub Copilot.
->
-> Crafting good prompts with GitHub Copilot depends a lot on how and where you are using GitHub Copilot. How you use Copilot is almost more important than the the prompt itself. There are essentially 3 interaction models that you'll use in VS Code when working with Copilot - Ghost Text, Inline Chat and Chat Sidebar / Quick Chat.
->
-> Knowing how and when to use these different interaction models is key to getting the most out of your prompt with Copilot. Let's take a look at each one in more detail.
+> So let's imagine, for a moment, that we (you and I dear viewer) are working for an agency we've been tasked with creating a web dashboard for all electric vehicles registered in the state. We're going to use Express and TypeScript to do that and we'll explore our advanced prompting techniques along the way.
 
 ### Chat Sidebar
 
-> Before we get started, we want to do a little brainstorming about how we're going to structure this project. The GitHub Copilot Chat sidebar is perfect for this kind of thing. I want Copilot to suggest to me a structure for this application. I'm going to tell it what I'm trying to do, then I'm going to ask it to suggest a structure. And then, I'm going to use a Q&A strategy here to have the model ask me questions before it suggests an answer.
+> Before we get started, we want to do a little brainstorming about how we're going to structure this project. The GitHub Copilot Chat sidebar is ideal for thinking and planning. Let's ask GitHub Copilot to suggest a good project structure for this application. To do that, we'll use something called a "Q&A" strategy.
 
 Add the following prompt to the chat sidebar...
 
@@ -60,17 +54,15 @@ Add the following prompt to the chat sidebar...
 i am building an application to display electric vehicle data. I want to use express and typescript. Give me some options for how to structure this app. Ask me clarifying questions that will help you suggest the right folder structure.
 ```
 
-> This prompt strategy is particulary useful because not only does it show how the model is thinking about this problem, it jogs my brain for things that I maybe had not thought of.
-> 
-> I'm can answer a lot of these with a simple yes or no.
+> A Q&A prompt is particulary useful because not only does it show how the model is thinking about this problem, it jogs our brain for things that maybe we had not thought of.
 
 The model should ask you questions. You can answer them with simple "Yes" or "No" with additional information if required. Separate your answers with a comma
 
-> And it gives me this nice folder structure with some information about the structure. This is a bit verbose. You'll find that Copilot does this a lot - it's sort of thinking out loud here, but it's often too much to read - a small documentation article. So we're going to use the magic prompt word, which you'll see me use a lot today, and that is, "simple". Including this word in your prompts helps keep Copilot from trying to do too much, and makes it easier to quickly understand the response.
+> It suggests this nice folder structure. This is a bit verbose. You'll find that Copilot does this a lot - it's sort of thinking out loud here, but it's often too much to read - a small documentation article. So we're going to use the magic prompt word, which you'll see me use a lot today, and that is, "simple". Including this word in your prompts helps keep Copilot from trying to do too much, and makes it easier to quickly understand the response.
 
 In the Chat Sidebar type the word "simplify". The model should return a much shorter, more simple response.
 
-> OK, I feel pretty good about this folder structure - let's get started writing some code. I'm going to start with an empty `app.ts` file and create the basic express server. For this, I'm going to use something called "Inline Chat".
+> Let's take this suggestion and start building our dashboard. I'm going to start with an empty `app.ts` file and create the basic express server. For this, we're going to use a different type of GitHub Copilot interaction - "Inline Chat".
 
 Create a new file in the root of the project called `app.ts`.
 
