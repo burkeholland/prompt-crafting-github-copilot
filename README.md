@@ -1,4 +1,4 @@
-# Prompt Crafting teqniques for GitHub Copilot every developer should know
+# Prompt Crafting techniques for GitHub Copilot every developer should know
 
 Slides: https://microsoft-my.sharepoint.com/:p:/p/buhollan/EadM4RNYrTNAt92bh1-Tp5wBNX3shhWedXBiKEWXUtympQ?e=EMVgRr
 
